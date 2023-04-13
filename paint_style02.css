@@ -1,0 +1,11 @@
+body{
+  background-color:azure;
+}
+canvas{
+  display          : block;
+  background-color : white;
+  border-style     : ridge;
+  border-width     : 10px;
+  border-color     : bisque;
+  cursor           : crosshair;
+}
