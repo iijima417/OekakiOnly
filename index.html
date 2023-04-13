@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="paint_style02.css">
+  <title>paint </title>
+
+  <script>
+    window.addEventListener('load', init, false); //HTML読み込み終了後に実行
+
+    let isDraw = false;
+    let c; // canvas
+    let borderWidth = 10;
+    let bx = 0;
+    let by = 0;
+
+    let penSize = 5;
+    let penColor = "#000";
+    let shadowColor = "#000";
+    let penStyle = "round";
+
+    function init() { //初期設定
+      c = document.getElementById("canvas");
+      c.addEventListener("mousedown", begin_draw, false);
+      c.addEventListener("mousemove", draw, false);
+      c.addEventListener("mouseup", end_draw, false);
+      document.getElementById("saveButton").addEventListener("click", saveData, false);
+      color.addEventListener('change', init, false);
+
+      penColor = color.value;
+
+      cnt.strokeStyle = penColor;
+    }
+
+    function begin_draw(e) { //描き始め
+      isDraw = true;
+      bx = e.pageX - c.offsetLeft - borderWidth; //マウス押下時のx座標
+      by = e.pageY - c.offsetTop - borderWidth; //マウス押下時のy座標
+    }
+
+    function draw(e) { //描いている途中
+      if (isDraw == true) {
+        let cnt = c.getContext("2d"); // 描画用のオブジェクトを取得
+
+        let x = e.pageX - c.offsetLeft - borderWidth;
+        let y = e.pageY - c.offsetTop - borderWidth;
+
+        cnt.shadowBlur = penSize;
+        cnt.shadowColor = penColor;
+        cnt.lineWidth = penSize;
+        cnt.lineCap = penStyle;
+        cnt.lineJoin = penStyle;
+        cnt.strokeStyle = penColor;
+
+        cnt.beginPath();
+        cnt.moveTo(bx, by);
+        cnt.lineTo(x, y);
+        cnt.closePath();
+        cnt.stroke();
+        bx = x;
+        by = y;
+      }
+    }
+
+    function end_draw(e) { //描き終わり
+      isDraw = false;
+    }
+
+    function showSlider() {
+      //sliderというidの要素を特定し、値を得る。必要に応じて変数に代入する。
+      let sliderValue = document.getElementById("slider").value;
+      //p01というidの要素を特定し、内容に「sliderというidの要素の値」を代入する。
+      document.getElementById("p01").innerHTML = sliderValue;
+    }
+
+    function sliderValue(){
+      let showValue = document.getElementById("slider").value;
+      document.getElementById('p01').innerHTML = showValue;
+      penSize = showValue;
+    }
+
+    function saveData() { // canvasの内容をpngとして保存する
+      let data = c.toDataURL("image/png");
+      data = data.replace("image/png", "image/octet-stream");
+
+      let dummyLink = document.createElement("a");
+      dummyLink.href = data;
+      dummyLink.download = "art.png";
+      document.body.appendChild(dummyLink);
+      dummyLink.click();
+      document.body.removeChild(dummyLink);
+
+    }
+
+  </script>
+
+</head>
+
+<body>
+  <canvas id="canvas" width="400" height="400"></canvas>
+  <p>
+    <button type="button" id="saveButton">PNGで保存</button>
+  <form>
+  <p id="p01"></p>
+  <p><input type="range" id="slider" value="25" min="1" max="50" oninput="sliderValue()"><br></p>
+  </form>
+</body>
+
+</html>
